@@ -8,7 +8,7 @@ CREATE TABLE card (
     furigana varchar(255) NOT NULL,
     english text NOT NULL,
     notes text NOT NULL,
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
     PRIMARY KEY (id)
 );
@@ -21,7 +21,7 @@ CREATE TABLE review (
     japanese_response varchar(255) NOT NULL,
     english_correct BOOL NOT NULL,
     japanese_correct BOOL NOT NULL,
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id)
 );
 

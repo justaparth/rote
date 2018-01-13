@@ -4,19 +4,21 @@ import java.sql.Timestamp
 import javax.inject.Inject
 
 import models.User
+import org.joda.time.DateTime
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(
+class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, repositoryUtils: RepositoryUtils)(
     implicit ec: ExecutionContext) {
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
+  import repositoryUtils.dateTimeMapper
 
   private class UserTable(tag: Tag) extends Table[User](tag, "user") {
 
@@ -29,9 +31,9 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(
 
     def email = column[String]("email")
 
-    def createdAt = column[Timestamp]("created_at")
+    def createdAt = column[DateTime]("created_at")
 
-    def updatedAt = column[Timestamp]("updated_at")
+    def updatedAt = column[DateTime]("updated_at")
 
     def * =
       (id, firstName, lastName, email, createdAt, updatedAt) <> ((User.apply _).tupled, User.unapply)
@@ -43,5 +45,20 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(
   def list(): Future[Seq[User]] = db.run {
     users.result
   }
+
+  def get(id: Long): Future[Option[User]] =
+    db.run {
+        users.filter(_.id === id).result
+      }
+      .map(_.headOption)
+
+  def insert(firstName: String, lastName: String, email: String): Future[User] =
+    db.run {
+      val currentTime = DateTime.now()
+      (users.map(x => (x.firstName, x.lastName, x.email, x.createdAt, x.updatedAt))
+        returning users.map(_.id)
+        into ((stuff, id) => User(id, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5))
+        ) += (firstName, lastName, email, currentTime, currentTime)
+    }
 
 }

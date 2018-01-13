@@ -1,27 +1,28 @@
 package repositories
 
-import java.sql.Timestamp
 import javax.inject.Inject
 
 import models.Review
-import models.User
+import org.joda.time.DateTime
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
-class ReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(
-    implicit ec: ExecutionContext) {
+class ReviewRepository @Inject()(
+  dbConfigProvider: DatabaseConfigProvider,
+  repositoryUtils: RepositoryUtils)(
+  implicit ec: ExecutionContext) {
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
+  import repositoryUtils.dateTimeMapper
 
   private class ReviewTable(tag: Tag) extends Table[Review](tag, "review") {
 
-    // TODO: what the hell does slick do with this information? why is AutoInc useful?
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
     def cardId = column[Long]("card_id")
@@ -36,7 +37,7 @@ class ReviewRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(
 
     def japaneseCorrect = column[Boolean]("japanese_correct")
 
-    def createdAt = column[Timestamp]("created_at")
+    def createdAt = column[DateTime]("created_at")
 
     def * =
       (id,

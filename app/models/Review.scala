@@ -1,6 +1,6 @@
 package models
 
-import java.sql.Timestamp
+import org.joda.time.DateTime
 
 case class Review(
     id: Long,
@@ -10,7 +10,7 @@ case class Review(
     japanese_response: String,
     english_correct: Boolean,
     japanese_correct: Boolean,
-    createdAt: Timestamp
+    createdAt: DateTime
 ) {
 
   def isCorrect(): Boolean = {

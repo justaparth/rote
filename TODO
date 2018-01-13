@@ -1,0 +1,6 @@
+Running list of thoughts / TODOs:
+
+1. Use Slick Code Generator instead of writing table classes manually!
+ -> but for now, it's good practice to write them manually.
+
+2. scalafmt is ok but get something better

@@ -1,6 +1,6 @@
 package models
 
-import java.sql.Timestamp
+import org.joda.time.DateTime
 
 case class Card(
     id: Long,
@@ -8,6 +8,6 @@ case class Card(
     furigana: String,
     english: Seq[String],
     notes: String,
-    createdAt: Timestamp,
-    updatedAt: Timestamp
+    createdAt: DateTime,
+    updatedAt: DateTime
 )
