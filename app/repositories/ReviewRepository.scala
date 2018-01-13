@@ -57,4 +57,23 @@ class ReviewRepository @Inject()(
     reviews.result
   }
 
+  def get(id: Long): Future[Option[Review]] = db.run {
+    reviews.filter(_.id === id).result
+  }.map(_.headOption)
+
+  def insert(
+    cardId: Long,
+    userId: Long,
+    englishResponse: String,
+    japaneseResponse: String,
+    englishCorrect: Boolean,
+    japaneseCorrect: Boolean): Future[Review] = db.run {
+
+    val currentTime = DateTime.now()
+    (reviews.map(x => (x.cardId, x.userId, x.englishResponse, x.japaneseResponse, x.englishCorrect, x.japaneseCorrect, x.createdAt))
+      returning reviews.map(_.id)
+      into ((stuff, id) => Review(id, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6, stuff._7))
+      ) += (cardId, userId, englishResponse, japaneseResponse, englishCorrect, japaneseCorrect, currentTime)
+  }
+
 }

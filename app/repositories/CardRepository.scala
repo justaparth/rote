@@ -68,4 +68,12 @@ class CardRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
       }
   }
 
+  def insert(japanese: String, furigana: String, english: Seq[String], notes: String): Future[Card] = db.run {
+    val currentTime = DateTime.now()
+    (cards.map(x => (x.japanese, x.furigana, x.english, x.notes, x.createdAt, x.updatedAt))
+      returning cards.map(_.id)
+      into ((stuff, id) => Card(id, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6))
+      ) += (japanese, furigana, english, notes, currentTime, currentTime)
+  }
+
 }
