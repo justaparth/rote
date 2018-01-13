@@ -3,19 +3,24 @@ organization := "com.rote"
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, SbtWeb)
 
 scalaVersion := "2.12.3"
 
-libraryDependencies += guice
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
-libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.16"
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-slick" % "3.0.3",
-  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3"
-)
-libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.6.8"
+  guice,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
+  "mysql" % "mysql-connector-java" % "5.1.16",
 
+  // slick integration
+  "com.typesafe.play" %% "play-slick" % "3.0.3",
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
+
+  // webjars support
+  "org.webjars" %% "webjars-play" % "2.6.3",
+  "org.webjars.bower" % "react" % "16.1.0",
+  "org.webjars.npm" % "babel-core" % "6.26.0"
+)
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.rote.controllers._"

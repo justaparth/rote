@@ -1,6 +1,7 @@
 Running list of thoughts / TODOs:
 
 1. Use Slick Code Generator instead of writing table classes manually!
- -> but for now, it's good practice to write them manually.
 
-2. scalafmt is ok but get something better
+2. Do actual user authentication... though it's just me so who even cares.
+
+3. Why doesn't adding SBT react work? [related: don't use type=text/babel anymore]

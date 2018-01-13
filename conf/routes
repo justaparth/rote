@@ -5,6 +5,7 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
+GET     /react                      controllers.HomeController.reactEntry
 
 # Users controller
 GET     /users/:id                  controllers.UserController.get(id: Long)
@@ -20,3 +21,6 @@ POST    /reviews/                   controllers.ReviewController.create()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+# Webjars
+->          /webjars                webjars.Routes
