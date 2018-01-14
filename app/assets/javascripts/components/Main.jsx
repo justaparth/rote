@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom'
+import Cards from './Cards.jsx'
 
 class Home extends React.Component {
   render() {
@@ -10,12 +11,6 @@ class Home extends React.Component {
 class Reviews extends React.Component {
   render() {
     return (<p> Reviews Element </p>)
-  }
-}
-
-class Cards extends React.Component {
-  render() {
-    return (<p> Cards Element </p>)
   }
 }
 

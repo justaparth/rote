@@ -51,10 +51,10 @@ var config = {
     },
     plugins: [
         //new webpack.optimize.CommonsChunkPlugin('common', 'common.js'),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: { warnings: false },
-            output: { comments: false }
-        }),
+        //new webpack.optimize.UglifyJsPlugin({
+        //    compress: { warnings: false },
+        //    output: { comments: false }
+        //}),
         new webpack.NoEmitOnErrorsPlugin()
     ]
 };

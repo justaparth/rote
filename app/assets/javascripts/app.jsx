@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter } from 'react-router-dom'
 import { render } from 'react-dom';
-import RoteApp from './RoteApp.jsx';
+import RoteApp from './components/RoteApp.jsx';
 
 import '../stylesheets/style.scss'
 
