@@ -2,7 +2,6 @@ package controllers
 
 import javax.inject._
 
-import org.webjars.play.WebJarAssets
 import play.api.mvc._
 import play.twirl.api.Html
 import repositories.CardRepository
@@ -20,8 +19,7 @@ class HomeController @Inject()(
     cc: ControllerComponents,
     userRepository: UserRepository,
     cardRepository: CardRepository,
-    reviewRepository: ReviewRepository,
-    webJarAssets: WebJarAssets)(implicit ec: ExecutionContext)
+    reviewRepository: ReviewRepository)(implicit ec: ExecutionContext)
     extends AbstractController(cc) {
 
   /**
