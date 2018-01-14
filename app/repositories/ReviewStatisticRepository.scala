@@ -2,7 +2,6 @@ package repositories
 
 import javax.inject.Inject
 
-import models.Deck
 import models.ReviewStatistic
 import org.joda.time.DateTime
 import play.api.db.slick.DatabaseConfigProvider

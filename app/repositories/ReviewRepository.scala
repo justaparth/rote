@@ -5,10 +5,10 @@ import javax.inject.Inject
 import models.Review
 import models.ReviewStatistic
 import org.joda.time.DateTime
-import org.joda.time.ReadableDuration
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
+import scala.collection.immutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
@@ -19,6 +19,7 @@ class ReviewRepository @Inject()(
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
+  import ReviewRepository._
   import dbConfig._
   import profile.api._
   import repositoryUtils.dateTimeMapper
@@ -88,42 +89,82 @@ class ReviewRepository @Inject()(
     reviews.filter(_.id === id).result
   }.map(_.headOption)
 
+  /**
+    * This method will insert a review as well as updated the review statistic (within a transaction).
+    */
   def insert(
-    cardId: Long,
-    userId: Long,
-    englishResponse: String,
-    japaneseResponse: String,
-    englishCorrect: Boolean,
-    japaneseCorrect: Boolean): Future[Review] =  {
+      cardId: Long,
+      userId: Long,
+      englishResponse: String,
+      japaneseResponse: String,
+      englishCorrect: Boolean,
+      japaneseCorrect: Boolean): Future[Review] =  {
 
     val currentTime = DateTime.now()
+
     val insertReview = (reviews.map(x => (x.cardId, x.userId, x.englishResponse, x.japaneseResponse, x.englishCorrect, x.japaneseCorrect, x.createdAt))
       returning reviews.map(_.id)
       into ((stuff, id) => Review(id, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6, stuff._7))
       ) += (cardId, userId, englishResponse, japaneseResponse, englishCorrect, japaneseCorrect, currentTime)
 
-    val finalQuery = insertReview.flatMap { insertRes =>
+    val actions = for {
+      review <- insertReview
+      stats <- reviewStatistics.filter(x => x.userId === userId && x.cardId === cardId).result
+      statOption = stats.headOption
 
-      // try and get the damn review statistic
-      val derp = reviewStatistics.filter(x => x.userId === userId && x.cardId === cardId).result
-      derp.flatMap { stats: Seq[ReviewStatistic] =>
+      // If the entry already exists, update it accordingly.
+      _ <- statOption.map { stat =>
+        // Pick the row and what columns
+        val query = for { x <- reviewStatistics if x.id === stat.id } yield (x.nextReview, x.level, x.maxLevel)
 
-        val statOption = stats.headOption
-        statOption.map { stat =>
-          val query = for { x <- reviewStatistics if x.id === stat.id } yield (x.nextReview, x.level, x.maxLevel)
-          query.update((DateTime.now().plusHours(4), stat.level + 1, math.max(stat.level + 1, stat.maxLevel))).map(_ => insertRes)
-        }.getOrElse {
-          // do normal addition here with defaults!
-          val currentTime = DateTime.now()
-          ((reviewStatistics.map(x => (x.cardId, x.userId, x.nextReview, x.level, x.maxLevel, x.createdAt, x.updatedAt))
-            returning reviewStatistics.map(_.id)
-            into ((stuff, id) => ReviewStatistic(id, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6, stuff._7))
-            ) += (cardId, userId, DateTime.now().plusHours(1), 1, 1, currentTime, currentTime)).map(_ => insertRes)
+
+        if (review.isCorrect()) {
+          val nextLevel = math.min(stat.level + 1, NUM_LEVELS)
+          query.update(
+            (currentTime.plusHours(LEVEL_TIMINGS(nextLevel)),
+              nextLevel,
+              math.max(nextLevel, stat.maxLevel)))
+        } else {
+          val nextLevel = math.max(0, stat.level - 2)
+          query.update(
+            (currentTime.plusHours(LEVEL_TIMINGS(nextLevel)),
+              nextLevel,
+              math.max(nextLevel, stat.maxLevel)))
         }
+
+      // Otherwise, add a new entry to the table
+      }.getOrElse {
+        (reviewStatistics.map(x => (x.cardId, x.userId, x.nextReview, x.level, x.maxLevel, x.createdAt, x.updatedAt))
+          returning reviewStatistics.map(_.id)
+          into ((stuff, id) => ReviewStatistic(id, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6, stuff._7))
+          ) += (cardId, userId, currentTime.plusHours(LEVEL_TIMINGS(1)), 1, 1, currentTime, currentTime)
       }
+    } yield {
+      review
     }
 
-    db.run(finalQuery.transactionally)
+    db.run(actions.transactionally)
   }
 
+}
+
+object ReviewRepository {
+
+  /**
+    * Timings for how long we should wait until the next level (in hours)
+    * NOTE: this cannot be changed, and it'll probably cause some chaos if you do.
+    */
+  final val LEVEL_TIMINGS: immutable.Seq[Int] = List(
+    0,            // 0 hours
+    4,            // 4 hours
+    8,            // 8 hours
+    24 * 1,       // 1 day
+    24 * 2,       // 2 days
+    24 * 7,       // 1 week
+    24 * 14,      // 2 weeks
+    24 * 30,      // 1 month
+    24 * 30 * 4   // 2 months
+  )
+
+  final val NUM_LEVELS = LEVEL_TIMINGS.length + 1
 }
