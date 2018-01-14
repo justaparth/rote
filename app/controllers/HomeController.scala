@@ -46,6 +46,6 @@ class HomeController @Inject()(
   }
 
   def reactEntry() = Action { implicit request =>
-    Ok(views.html.reactstart())
+    Ok(views.html.reactstart("Your app is ready"))
   }
 }

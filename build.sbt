@@ -1,3 +1,5 @@
+import sbt.internal.io.Source
+
 name := """rote"""
 organization := "com.rote"
 
@@ -21,6 +23,18 @@ libraryDependencies ++= Seq(
   "org.webjars.bower" % "react" % "16.1.0",
   "org.webjars.npm" % "babel-core" % "6.26.0"
 )
+
+
+PlayKeys.playRunHooks += Webpack(baseDirectory.value)
+
+// TODO: understand what the hell this does one day
+// excludeFilter in (Assets, JshintKeys.jshint) := "*.js"
+//watchSources := watchSources.value.filterNot { source =>
+    //source.a..endsWith(".js") || path.getName == ("build")
+//    false
+//  }
+
+pipelineStages := Seq(digest, gzip)
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.rote.controllers._"
