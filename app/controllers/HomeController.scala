@@ -39,7 +39,7 @@ class HomeController @Inject()(
       System.out.println(cards.map(_.toString))
       System.out.println(reviews.map(_.toString))
       //Ok(views.html.index())
-      Ok(views.html.main("hihi")(Html.apply("<p>hi</p>")))
+      Ok(views.html.index())
     }
   }
 

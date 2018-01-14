@@ -19,7 +19,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3"
 )
 
-
 PlayKeys.playRunHooks += Webpack(baseDirectory.value)
 
 // TODO: understand what the hell this does one day
