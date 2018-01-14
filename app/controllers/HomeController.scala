@@ -2,7 +2,6 @@ package controllers
 
 import javax.inject._
 
-import org.webjars.play.WebJarAssets
 import play.api.mvc._
 import play.twirl.api.Html
 import repositories.CardRepository
@@ -20,8 +19,7 @@ class HomeController @Inject()(
     cc: ControllerComponents,
     userRepository: UserRepository,
     cardRepository: CardRepository,
-    reviewRepository: ReviewRepository,
-    webJarAssets: WebJarAssets)(implicit ec: ExecutionContext)
+    reviewRepository: ReviewRepository)(implicit ec: ExecutionContext)
     extends AbstractController(cc) {
 
   /**
@@ -41,11 +39,11 @@ class HomeController @Inject()(
       System.out.println(cards.map(_.toString))
       System.out.println(reviews.map(_.toString))
       //Ok(views.html.index())
-      Ok(views.html.main("hihi")(Html.apply("<p>hi</p>")))
+      Ok(views.html.index())
     }
   }
 
   def reactEntry() = Action { implicit request =>
-    Ok(views.html.reactstart())
+    Ok(views.html.reactstart("Your app is ready"))
   }
 }
