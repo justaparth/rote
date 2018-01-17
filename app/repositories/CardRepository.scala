@@ -26,7 +26,7 @@ class CardRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
     */
   private implicit val stringSequenceMapper = MappedColumnType.base[Seq[String], String](
     /* f: Seq[String] -> String */
-    seq => seq.mkString(","),
+    seq => seq.mkString("~~,~~"),
     /* g: String -> Seq[String] */
     str  => str.split(",")
   )
@@ -34,6 +34,8 @@ class CardRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
   private class CardTable(tag: Tag) extends Table[Card](tag, "card") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
+    def deckId = column[Long]("deck_id")
 
     def japanese = column[String]("japanese")
 
@@ -48,7 +50,7 @@ class CardRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
     def updatedAt = column[DateTime]("updated_at")
 
     def * =
-      (id, japanese, furigana, english, notes, createdAt, updatedAt) <> ((Card.apply _).tupled, Card.unapply)
+      (id, deckId, japanese, furigana, english, notes, createdAt, updatedAt) <> ((Card.apply _).tupled, Card.unapply)
 
   }
 
@@ -68,11 +70,11 @@ class CardRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
       }
   }
 
-  def insert(japanese: String, furigana: String, english: Seq[String], notes: String): Future[Card] = db.run {
+  def insert(deckId: Long, japanese: String, furigana: String, english: Seq[String], notes: String): Future[Card] = db.run {
     val currentTime = DateTime.now()
     (cards.map(x => (x.japanese, x.furigana, x.english, x.notes, x.createdAt, x.updatedAt))
       returning cards.map(_.id)
-      into ((stuff, id) => Card(id, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6))
+      into ((stuff, id) => Card(id, deckId, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6))
       ) += (japanese, furigana, english, notes, currentTime, currentTime)
   }
 

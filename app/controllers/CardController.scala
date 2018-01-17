@@ -41,6 +41,7 @@ class CardController @Inject()(
     CardCreate.format.reads(body) match {
       case JsSuccess(cardCreate, _) =>
         cardRepository.insert(
+          cardCreate.deckId,
           cardCreate.japanese,
           cardCreate.furigana,
           cardCreate.english,
@@ -54,7 +55,7 @@ class CardController @Inject()(
 }
 
 object CardController {
-  case class CardCreate(japanese: String, furigana: String, english: Seq[String], notes: String)
+  case class CardCreate(deckId: Long, japanese: String, furigana: String, english: Seq[String], notes: String)
 
   object CardCreate {
     implicit val format: OFormat[CardCreate] = Json.format[CardCreate]

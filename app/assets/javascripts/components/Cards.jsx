@@ -1,6 +1,5 @@
 import React from 'react';
 import CardActions from '../actions/cardActions.js'
-import CardStore from '../stores/cardStore.js';
 
 class AddCard extends React.Component {
 
@@ -65,54 +64,35 @@ class AddCard extends React.Component {
 
 class ListCards extends React.Component {
 
-  constructor(props) {
-     super(props);
-     this.state = {
-         items: CardStore.getAllItems()
-     };
-     this._onChange = this._onChange.bind(this);
+  render() {
+      console.log("HELLO RENDERING");
+      console.log(this.props);
+
+      let noItemsMessage;
+
+      // Show a friendly message instead if there are no items.
+      if (this.props.cards === []) {
+          noItemsMessage = (<li className="no-items">Your wallet is new!</li>);
+      }
+
+      return (
+          <ul className="items-list">
+              {noItemsMessage}
+              {this.props.cards.map((itemDetails) => {
+                  let amountType = parseFloat(itemDetails.amount) > 0 ? 'positive' : 'negative';
+                  return (<li key={itemDetails.id}>{itemDetails.description} <span className={amountType}>{itemDetails.amount}</span></li>);
+              })}
+          </ul>
+      );
   }
-
-  _onChange() {
-     this.setState({ items: CardStore.getAllItems() });
-  }
-
-  componentWillMount() {
-     CardStore.addChangeListener(this._onChange);
-  }
-
-  componentWillUnmount() {
-     CardStore.removeChangeListener(this._onChange);
-  }
-
-
-    render() {
-
-        let noItemsMessage;
-
-        // Show a friendly message instead if there are no items.
-        if (!this.state.items.length) {
-            noItemsMessage = (<li className="no-items">Your wallet is new!</li>);
-        }
-
-        return (
-            <ul className="items-list">
-                {noItemsMessage}
-                {this.state.items.map((itemDetails) => {
-                    let amountType = parseFloat(itemDetails.amount) > 0 ? 'positive' : 'negative';
-                    return (<li key={itemDetails.id}>{itemDetails.description} <span className={amountType}>{itemDetails.amount}</span></li>);
-                })}
-            </ul>
-        );
-    }
 }
 
 class Cards extends React.Component {
   render() {
     return (
       <div>
-        <ListCards />
-        <AddCard />
+        <ListCards {...this.props} />
+        <AddCard {...this.props} />
       </div>
     )
   }

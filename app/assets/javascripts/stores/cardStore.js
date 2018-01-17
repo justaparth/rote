@@ -1,48 +1,27 @@
-import { EventEmitter } from 'events';
+/* eslint class-methods-use-this: 0 */
+
+import { ReduceStore } from 'flux/utils';
+import Immutable from 'immutable';
 import Dispatcher from '../dispatcher';
 import ActionTypes from '../constants';
 
-const CHANGE = 'CHANGE';
-let _cardStore = [];
-
-class CardStore extends EventEmitter {
-
+class CardStore extends ReduceStore {
   constructor() {
-    super();
-
-    // Registers action handler with the Dispatcher.
-    Dispatcher.register(this._registerToActions.bind(this));
+    super(Dispatcher);
   }
 
-  // Switches over the action's type when an action is dispatched
-  _registerToActions(action) {
-    switch(action.actionType) {
+  getInitialState() {
+    return Immutable.List();
+  }
+
+  reduce(state, action) {
+    switch (action.actionType) {
       case ActionTypes.CREATE_CARD:
-        this._addNewCard(action.payload);
-      break;
+        return state.push(action.card);
+      default:
+        return null;
     }
   }
-
-  _addNewCard(card) {
-    card.id = _cardStore.length;
-    _cardStore.push(card);
-    this.emit(CHANGE);
-  }
-
-  getAllItems() {
-    return _cardStore;
-  }
-
-    // Hooks a React component's callback to the CHANGED event.
-  addChangeListener(callback) {
-      this.on(CHANGE, callback);
-  }
-
-  // Removes the listener from the CHANGED event.
-  removeChangeListener(callback) {
-      this.removeListener(CHANGE, callback);
-  }
-
 }
 
 export default new CardStore();
