@@ -1,21 +1,17 @@
-import { EventEmitter } from 'events';
+/* eslint class-methods-use-this: 0 */
+
 import { ReduceStore } from 'flux/utils';
+import Immutable from 'immutable';
 import Dispatcher from '../dispatcher';
 import ActionTypes from '../constants';
-import Immutable from 'immutable';
 
 class CardStore extends ReduceStore {
-
   constructor() {
     super(Dispatcher);
   }
 
   getInitialState() {
     return Immutable.List();
-  }
-
-  areEqual(a, b) {
-    false;
   }
 
   reduce(state, action) {
@@ -26,7 +22,6 @@ class CardStore extends ReduceStore {
         return null;
     }
   }
-
 }
 
 export default new CardStore();

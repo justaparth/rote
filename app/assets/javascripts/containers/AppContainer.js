@@ -1,21 +1,17 @@
-'use strict';
-
-import AppView from '../components/AppView.jsx';
 import { Container } from 'flux/utils';
-import CardStore from '../stores/cardStore.js';
+import AppView from '../components/AppView';
+import CardStore from '../stores/cardStore';
 
 function getStores() {
   return [
-    CardStore
+    CardStore,
   ];
 }
 
 function getState() {
-  console.log("getState method in AppContainer");
-  console.log(CardStore.getState());
   return {
     cards: CardStore.getState(),
-    extraState: [1, 2, 3, 4]
+    extraState: [1, 2, 3, 4],
   };
 }
 
