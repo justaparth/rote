@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import { ReduceStore } from 'flux/utils';
 import Dispatcher from '../dispatcher';
 import ActionTypes from '../constants';
+import Immutable from 'immutable';
 
 class CardStore extends ReduceStore {
 
@@ -10,9 +11,7 @@ class CardStore extends ReduceStore {
   }
 
   getInitialState() {
-    return {
-      cards: []
-    }
+    return Immutable.List();
   }
 
   areEqual(a, b) {
@@ -20,12 +19,9 @@ class CardStore extends ReduceStore {
   }
 
   reduce(state, action) {
-    console.log(state);
-    console.log(action);
     switch (action.actionType) {
       case ActionTypes.CREATE_CARD:
-        state.cards.push(action.card);
-        return state;
+        return state.push(action.card);
       default:
         return null;
     }

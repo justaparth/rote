@@ -66,6 +66,7 @@ class ListCards extends React.Component {
 
   render() {
       console.log("HELLO RENDERING");
+      console.log(this.props);
 
       let noItemsMessage;
 
