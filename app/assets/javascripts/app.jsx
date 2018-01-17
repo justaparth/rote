@@ -1,14 +1,8 @@
-import React from 'react';
-import { HashRouter } from 'react-router-dom'
 import { render } from 'react-dom';
-import RoteApp from './components/RoteApp.jsx';
+import AppContainer from './containers/AppContainer.js';
 
 import '../stylesheets/style.scss'
 
 render(
-  (
-    <HashRouter>
-      <RoteApp />
-    </HashRouter>
-  ), document.getElementById("root")
+  <AppContainer />, document.getElementById("root")
 );

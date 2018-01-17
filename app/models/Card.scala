@@ -9,6 +9,7 @@ import JodaDateTimeHelper.jodaDateWrites
 
 case class Card(
   id: Long,
+  deckId: Long,
   japanese: String,
   furigana: String,
   english: Seq[String],
