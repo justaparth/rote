@@ -1,4 +1,4 @@
-# --- Deck schema
+# --- Review Schema
 
 # --- !Ups
 
