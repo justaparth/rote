@@ -40,7 +40,7 @@ class DeckController @Inject()(
 
     DeckCreate.format.reads(body) match {
       case JsSuccess(deckCreate, _) =>
-        deckRepository.insert(deckCreate.name)
+        deckRepository.insert(deckCreate.userId, deckCreate.name)
           .map(deck => Ok(Json.toJson(deck)))
       case JsError(errors) =>
         Future.successful(BadRequest(s"Please give valid JSON. $errors"))
@@ -50,7 +50,7 @@ class DeckController @Inject()(
 }
 
 object DeckController {
-  case class DeckCreate(name: String)
+  case class DeckCreate(name: String, userId: Long)
 
   object DeckCreate {
     implicit val format: OFormat[DeckCreate] = Json.format[DeckCreate]

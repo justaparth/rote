@@ -32,8 +32,7 @@ class CardController @Inject()(
       }
     }
   }
-
-
+  
   def create = Action.async { implicit request =>
     // TODO: handle this error better.
     val body = request.body.asJson.get

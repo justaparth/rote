@@ -23,6 +23,8 @@ class DeckRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
+    def userId = column[Long]("user_id")
+
     def name = column[String]("name")
 
     def createdAt = column[DateTime]("created_at")
@@ -30,7 +32,7 @@ class DeckRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
     def updatedAt = column[DateTime]("updated_at")
 
     def * =
-      (id, name, createdAt, updatedAt) <> ((Deck.apply _).tupled, Deck.unapply)
+      (id, userId, name, createdAt, updatedAt) <> ((Deck.apply _).tupled, Deck.unapply)
 
   }
 
@@ -50,12 +52,12 @@ class DeckRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
       }
   }
 
-  def insert(name: String): Future[Deck] = db.run {
+  def insert(userId: Long, name: String): Future[Deck] = db.run {
     val currentTime = DateTime.now()
-    (decks.map(x => (x.name, x.createdAt, x.updatedAt))
+    (decks.map(x => (x.userId, x.name, x.createdAt, x.updatedAt))
       returning decks.map(_.id)
-      into ((stuff, id) => Deck(id, stuff._1, stuff._2, stuff._3))
-      ) += (name, currentTime, currentTime)
+      into ((stuff, id) => Deck(id, stuff._1, stuff._2, stuff._3, stuff._4))
+      ) += (userId, name, currentTime, currentTime)
   }
 
 }

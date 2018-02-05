@@ -6,6 +6,7 @@ import JodaDateTimeHelper.jodaDateReads
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 
+// TODO: serialize user ids as their own type.
 case class User(
   id: Long,
   firstName: String,
