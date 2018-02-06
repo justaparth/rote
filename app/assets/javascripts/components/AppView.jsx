@@ -1,30 +1,32 @@
 import React from 'react';
 import { HashRouter, Switch, Route } from 'react-router-dom';
-import Cards from './Cards.jsx';
-import Header from '../components/Header.jsx';
+import Decks from './Decks.jsx';
+import DeckDisplay from './DeckDisplay.jsx';
+import Home from './Home.jsx';
+import Reviews from './Reviews.jsx';
+import AppBar from 'material-ui/AppBar';
+import Tabs, { Tab } from 'material-ui/Tabs';
+import { Link } from 'react-router-dom'
 
-class Home extends React.Component {
-  render() {
-    console.log(this.props);
-    return (<p> Home Element </p>)
-  }
-}
-
-class Reviews extends React.Component {
-  render() {
-    console.log(this.props);
-    return (<p> Reviews Element </p>)
-  }
-}
+import Reboot from 'material-ui/Reboot';
 
 function Temp(props) {
   return (
     <div>
-      <Header />
+      <AppBar position="static">
+        <Tabs>
+          <Tab label="Home" component={Link} to='/' />
+          <Tab label="Decks" component={Link} to='/decks' />
+          <Tab label="Reviews" component={Link} to='/reviews' />
+        </Tabs>
+      </AppBar>
       <Switch>
         <Route exact path='/' render={() => <Home  {...props}/>} />
+        {/* fix this */}
+        <Route exact path='/decks' render={() => <Decks {...props}/>} />
+        <Route exact path='/decks/' render={() => <Decks {...props}/>} />
+        <Route path='/decks/:deckId' render={() => <DeckDisplay {...props}/>} />
         <Route path='/reviews' render={() => <Reviews {...props}/>} />
-        <Route path='/cards' render={() => <Cards {...props}/>} />
       </Switch>
     </div>
   )
