@@ -14,6 +14,7 @@ POST    /users/                     controllers.UserController.create()
 # Card controller
 GET     /cards/:id                  controllers.CardController.get(id: Long)
 POST    /cards/                     controllers.CardController.create()
+GET     /cards/                     controllers.CardController.getByFinderName(finder: String)
 
 # Review controller
 GET     /reviews/:id                controllers.ReviewController.get(id: Long)
@@ -21,6 +22,7 @@ POST    /reviews/                   controllers.ReviewController.create()
 
 # Deck Controller
 GET     /decks/:id                  controllers.DeckController.get(id: Long)
+GET     /decks/                     controllers.DeckController.getByFinderName(finder: String)
 POST    /decks                      controllers.DeckController.create()
 
 # Map static resources from the /public folder to the /assets URL path

@@ -25,7 +25,7 @@ function Temp(props) {
         {/* fix this */}
         <Route exact path='/decks' render={() => <Decks {...props}/>} />
         <Route exact path='/decks/' render={() => <Decks {...props}/>} />
-        <Route path='/decks/:deckId' render={() => <DeckDisplay {...props}/>} />
+        <Route path='/decks/:deckId' render={(routerProps) => <DeckDisplay {...routerProps} {...props}/>} />
         <Route path='/reviews' render={() => <Reviews {...props}/>} />
       </Switch>
     </div>

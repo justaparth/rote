@@ -52,6 +52,12 @@ class DeckRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
       }
   }
 
+  def getByUserId(userId: Long): Future[Seq[Deck]] = {
+    db.run {
+      decks.filter(_.userId === userId).result
+    }
+  }
+
   def insert(userId: Long, name: String): Future[Deck] = db.run {
     val currentTime = DateTime.now()
     (decks.map(x => (x.userId, x.name, x.createdAt, x.updatedAt))

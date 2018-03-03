@@ -28,7 +28,7 @@ class CardRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
     /* f: Seq[String] -> String */
     seq => seq.mkString("~~,~~"),
     /* g: String -> Seq[String] */
-    str  => str.split(",")
+    str  => str.split("~~,~~")
   )
 
   private class CardTable(tag: Tag) extends Table[Card](tag, "card") {
@@ -70,12 +70,18 @@ class CardRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, reposit
       }
   }
 
+  def getByDeck(deckId: Long): Future[Seq[Card]] = {
+    db.run {
+      cards.filter(_.deckId === deckId).result
+    }
+  }
+
   def insert(deckId: Long, japanese: String, furigana: String, english: Seq[String], notes: String): Future[Card] = db.run {
     val currentTime = DateTime.now()
-    (cards.map(x => (x.japanese, x.furigana, x.english, x.notes, x.createdAt, x.updatedAt))
+    (cards.map(x => (x.deckId, x.japanese, x.furigana, x.english, x.notes, x.createdAt, x.updatedAt))
       returning cards.map(_.id)
-      into ((stuff, id) => Card(id, deckId, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6))
-      ) += (japanese, furigana, english, notes, currentTime, currentTime)
+      into ((stuff, id) => Card(id, stuff._1, stuff._2, stuff._3, stuff._4, stuff._5, stuff._6, stuff._7))
+      ) += (deckId, japanese, furigana, english, notes, currentTime, currentTime)
   }
 
 }

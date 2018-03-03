@@ -16,8 +16,8 @@ import scala.concurrent.Future
 
 @Singleton
 class CardController @Inject()(
-  cc: ControllerComponents,
-  cardRepository: CardRepository)(implicit ec: ExecutionContext)
+    cc: ControllerComponents,
+    cardRepository: CardRepository)(implicit ec: ExecutionContext)
   extends AbstractController(cc) {
 
   import CardController._
@@ -30,6 +30,13 @@ class CardController @Inject()(
       }.getOrElse {
         NotFound("Card not found")
       }
+    }
+  }
+
+  def getByFinderName(finder: String) = Action.async { implicit request =>
+    val deckId = request.getQueryString("deckId").get.toLong
+    cardRepository.getByDeck(deckId).map { cards =>
+      Ok(Json.toJson(cards))
     }
   }
   

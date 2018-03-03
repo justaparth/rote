@@ -33,6 +33,17 @@ class DeckController @Inject()(
     }
   }
 
+  def getByFinderName(finder: String) = Action.async { implicit request =>
+    if (finder == "byUserId") {
+      val userId = request.getQueryString("userId").get.toLong
+      deckRepository.getByUserId(userId).map { decksSeq =>
+        Ok(Json.toJson(decksSeq))
+      }
+    } else {
+      Future.successful(NotFound(s"No finder found with name $finder"))
+    }
+  }
+
 
   def create = Action.async { implicit request =>
     // TODO: handle this error better.

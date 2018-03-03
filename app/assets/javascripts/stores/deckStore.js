@@ -3,17 +3,26 @@
 import { ReduceStore } from 'flux/utils';
 import Immutable from 'immutable';
 import Dispatcher from '../dispatcher';
-import ActionTypes from '../constants';
+import ActionTypes from '../constants/index';
 
 class DeckStore extends ReduceStore {
   constructor() {
     super(Dispatcher);
   }
 
+  /**
+   * Deck structure:
+   * { name: '', cards: [], author_id: <int> }
+   *
+  */
   getInitialState() {
-    const map =
-      Immutable.Map().set(1, []).set(2, []).set(3, []);
-    return map;
+    return Immutable.Map();
+  }
+
+  areEqual() {
+    // TODO: understand about this method
+    // TODO: a,b are the params
+    return false;
   }
 
   reduce(state, action) {
@@ -23,6 +32,19 @@ class DeckStore extends ReduceStore {
         const newDeck = state.get(card.deckId);
         newDeck.append(card);
         return state.set(card.deckId, newDeck);
+      }
+      case ActionTypes.LOADED_DECKS_FOR_USER: {
+        const { decks } = action;
+        return decks.reduce(
+          (map, deck) => map.set(deck.id, deck),
+          Immutable.Map(),
+        );
+      }
+      case ActionTypes.LOADED_DECK: {
+        const { cards, deckId } = action;
+        const deck = state.get(deckId);
+        deck.cards = cards;
+        return state.set(deckId, deck);
       }
       default: {
         return null;

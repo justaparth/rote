@@ -7,21 +7,21 @@ import { Link } from 'react-router-dom';
 class Decks extends React.Component {
   render() {
     const { decks } = this.props;
-    const a = [1, 2, 3];
 
     return (
       <div style={{'marginTop': '10px'}}>
         {
-          decks.entrySeq().map( x => {
+          decks.entrySeq().map( entry => {
+            const deck = entry[1];
             return (
-              <Card style={{ 'textDecoration': 'none' }} component={Link} to={'/decks/' + x[0]} key={x[0]}>
+              <Card style={{ 'textDecoration': 'none' }} component={Link} to={'/decks/' + deck.id} key={deck.id}>
                 <CardContent>
                   <Typography variant="headline" component="h2">
-                    Sample Deck
+                    {deck.name}
                   </Typography>
-                  <Typography>日本語能力試験N２語彙練習</Typography>
+                  <Typography>{deck.description}</Typography>
                   <Typography component="p">
-                    These are the words from that impossibly hard textbook.
+                    These are some words
                   </Typography>
                 </CardContent>
               </Card>
